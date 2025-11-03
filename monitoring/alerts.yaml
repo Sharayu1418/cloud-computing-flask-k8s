@@ -1,0 +1,11 @@
+groups:
+  - name: failing-probes
+    rules:
+      - alert: FailingProbesHigh
+        expr: kube_pod_container_status_restarts_total > 3
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod {{ $labels.pod }} failing repeatedly"
+          description: "Pod {{ $labels.pod }} has restarted more than 3 times in 2 minutes."

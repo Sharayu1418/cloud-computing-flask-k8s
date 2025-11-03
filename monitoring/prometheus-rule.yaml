@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: todo-app-alerts
+  namespace: monitoring
+spec:
+  groups:
+  - name: todo-app
+    rules:
+    - alert: HighCPUUsage
+      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage detected"
+        description: "CPU usage is above 80% on {{ $labels.instance }}"
+    - alert: HighMemoryUsage
+      expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 80
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage detected"
+        description: "Memory usage is above 80% on {{ $labels.instance }}"
+    - alert: PodCrashLooping
+      expr: rate(kube_pod_container_status_restarts_total{namespace="default"}[15m]) * 60 * 5 > 0
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod is crash looping"
+        description: "Pod {{ $labels.pod }} is restarting frequently"

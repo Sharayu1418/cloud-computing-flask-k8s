@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-todo-deployment
+  labels:
+    app: flask-todo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-todo
+  template:
+    metadata:
+      labels:
+        app: flask-todo
+    spec:
+      containers:
+        - name: flask-todo
+          image: sharayu1418/flask-todo:v2
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://mongo:27017/todo_db"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-todo-service
+  labels:
+    app: flask-todo
+spec:
+  type: LoadBalancer
+  selector:
+    app: flask-todo
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000

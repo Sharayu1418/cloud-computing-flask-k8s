@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-todo-deployment-probed
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-todo-probed
+  template:
+    metadata:
+      labels:
+        app: flask-todo-probed
+    spec:
+      containers:
+      - name: flask-todo
+        image: sharayu1418/flask-todo:v2
+        ports:
+        - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5

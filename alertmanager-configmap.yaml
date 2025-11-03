@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  alertmanager.yaml: "global:\r\n  resolve_timeout: 5m\r\n\r\nroute:\r\n  receiver:
+    'slack'\r\n\r\nreceivers:\r\n  - name: 'slack'\r\n    slack_configs:\r\n      -
+    send_resolved: true\r\n        api_url: slack-webhook-url\r\n
+    \       channel: '@Sharayu Rasal (you)'\r\n        title: '{{ .CommonAnnotations.summary
+    }}'\r\n        text: '{{ .CommonAnnotations.description }}'\r\n\r\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: alertmanager-prometheus-kube-prometheus-alertmanager
+  namespace: monitoring

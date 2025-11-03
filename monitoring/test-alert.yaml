@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-alert
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 79.1.0
+    chart: kube-prometheus-stack-79.1.0
+    heritage: Helm
+    release: prometheus
+spec:
+  groups:
+  - name: test.alerts
+    interval: 10s
+    rules:
+    - alert: KubernetesTestAlert
+      expr: up == 1
+      for: 10s
+      labels:
+        severity: warning
+      annotations:
+        summary: "Test Alert - Always Firing"
+        description: "This is a test alert to verify Slack integration"

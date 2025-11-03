@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-slack-webhook
+  namespace: monitoring
+type: Opaque
+stringData:
+  slack-webhook-url: slack-webhook-url
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: slack-alerts
+  namespace: monitoring
+spec:
+  route:
+    receiver: 'slack-notifications'
+    groupBy: ['alertname', 'priority']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 12h
+  receivers:
+  - name: 'slack-notifications'
+    slackConfigs:
+    - apiURL:
+        key: slack-webhook-url
+        name: alertmanager-slack-webhook
+      channel: '#k8s-alerts'
+      sendResolved: true
